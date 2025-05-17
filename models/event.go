@@ -53,3 +53,12 @@ func (event *Event) update(newEvent Event) {
 	event.Name = newEvent.Name
 	fmt.Println("event is updated successfully")
 }
+
+func DeleteEvent(id string) {
+	for i, val := range events {
+		if fmt.Sprint(val.ID) == id {
+			events = append(events[:i], events[i+1:]...)
+			return
+		}
+	}
+}
