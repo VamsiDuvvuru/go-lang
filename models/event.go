@@ -62,3 +62,12 @@ func DeleteEvent(id string) {
 		}
 	}
 }
+
+func GetEventsById(id string) Event {
+	for _, val := range events {
+		if fmt.Sprint(val.ID) == id {
+			return val
+		}
+	}
+	return Event{}
+}

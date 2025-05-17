@@ -13,6 +13,7 @@ func main() {
 	server.POST("/createEvent", createEvent)
 	server.PUT("/updateEvent", updateEvent)
 	server.DELETE("/deleteEvent/:id", deleteEvent)
+	server.GET("/getEvent/:id", getEventsByID)
 	server.Run(":8080")
 }
 
@@ -52,4 +53,17 @@ func deleteEvent(context *gin.Context) {
 	}
 	models.DeleteEvent(id)
 	context.JSON(http.StatusAccepted, gin.H{"body": "deleted the event successfully"})
+}
+
+func getEventsByID(context *gin.Context) {
+	id := context.Param("id")
+	if id == "" {
+		context.JSON(http.StatusBadRequest, "id is not provided")
+	}
+	var event models.Event = models.GetEventsById(id)
+	if event.ID == 0 && event.Name == "" {
+		context.JSON(http.StatusNotFound, gin.H{"body": "event not found"})
+		return
+	}
+	context.JSON(http.StatusAccepted, event)
 }

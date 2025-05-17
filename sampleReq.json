@@ -16,14 +16,6 @@
     "UserID": 2
   },
   {
-    "ID": 2,
-    "Name": "app2",
-    "Description": "after testing gin framework",
-    "Location": "India , Ap",
-    "DateTime": "0001-01-01T00:00:00Z",
-    "UserID": 2
-  },
-  {
     "ID": 3,
     "Name": "app3",
     "Description": "after testing gin framework",
