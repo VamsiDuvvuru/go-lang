@@ -1,6 +1,7 @@
 package main
 
 import (
+	"example.com/mygolangproj/db"
 	"example.com/mygolangproj/routes"
 	"github.com/gin-gonic/gin"
 )
@@ -8,4 +9,5 @@ import (
 func main() {
 	server := gin.Default()
 	routes.RegisterRoutes(server)
+	db.InitDB()
 }
