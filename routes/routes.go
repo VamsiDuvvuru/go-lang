@@ -8,5 +8,4 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PUT("/updateEvent", UpdateEvent)
 	server.DELETE("/deleteEvent/:id", DeleteEvent)
 	server.GET("/getEvent/:id", GetEventsByID)
-	server.Run(":8080")
 }

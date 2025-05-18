@@ -10,4 +10,5 @@ func main() {
 	server := gin.Default()
 	routes.RegisterRoutes(server)
 	db.InitDB()
+	server.Run(":8080")
 }

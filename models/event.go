@@ -27,13 +27,11 @@ func (e Event) Save() error {
 		fmt.Println("error in preparing the statement")
 		return err
 	}
-	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID)
+	_, err = stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID)
 	if err != nil {
 		fmt.Println("error in executing the statement")
 		return err
 	}
-	id, err := result.LastInsertId()
-	e.ID = int(id)
 	return err
 }
 
@@ -46,7 +44,8 @@ func (e Event) toString() string {
 }
 
 func GetAllEvents() []Event {
-	query := `SELECT id, name, description, location, dateTime FROM events`
+	events = []Event{} // Clear the events slice to avoid duplication
+	query := `SELECT id, name, description, location, dateTime , user_id FROM events`
 	rows, err := db.DB.Query(query)
 	if err != nil {
 		fmt.Println("error in getting the events")
@@ -54,10 +53,28 @@ func GetAllEvents() []Event {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var event Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime)
+		// Print raw row values before scanning (for debugging)
+		cols, err := rows.Columns()
 		if err != nil {
-			fmt.Println("error in scanning the event")
+			fmt.Println("error getting columns:", err)
+			continue
+		}
+		rawResult := make([]interface{}, len(cols))
+		dest := make([]interface{}, len(cols))
+		for i := range rawResult {
+			dest[i] = &rawResult[i]
+		}
+		if err := rows.Scan(dest...); err != nil {
+			fmt.Println("error scanning raw row:", err)
+			continue
+		}
+		fmt.Println("Raw row values:", rawResult)
+
+		// Now scan into the event struct as usual
+		var event Event
+		err = rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+		if err != nil {
+			fmt.Println("error in scanning the event", err)
 			return nil
 		}
 		events = append(events, event)
@@ -92,7 +109,7 @@ func UpdateEvent(id int, event Event) {
 // }
 
 func DeleteEvent(id string) {
-	query := `DELETE FROM events WHERE id=?`
+	query := `DELETE FROM events WHERE id=? or id is null`
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		fmt.Println("error in preparing the statement")
@@ -108,7 +125,7 @@ func DeleteEvent(id string) {
 }
 
 func GetEventsById(id string) Event {
-	query := `SELECT id, name, description, location, dateTime FROM events WHERE id=?`
+	query := `SELECT id, name, description, location, dateTime,user_id FROM events WHERE id=?`
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		fmt.Println("error in preparing the statement")
@@ -116,9 +133,9 @@ func GetEventsById(id string) Event {
 	}
 	defer stmt.Close()
 	var event Event
-	err = stmt.QueryRow(id).Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime)
+	err = stmt.QueryRow(id).Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 	if err != nil {
-		fmt.Println("error in scanning the event")
+		fmt.Println("error in scanning the event ," + err.Error())
 		return Event{}
 	}
 	return event
