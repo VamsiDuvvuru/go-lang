@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Alice Johnson*",
+    "age": 22,
+    "grade": "B",
+    "address": "456 Elm St, Springfield",
+    "phone": "987-654-3210"
+  },
+  {
+    "name": "Charlie Brown",
+    "age": 23,
+    "grade": "A",
+    "address": "321 Pine St, Springfield",
+    "phone": "444-987-6543"
+  }
+]
